@@ -1,0 +1,16 @@
+# 换行符规则：仓库内统一按 LF 存储，签出时按平台转换
+* text=auto eol=lf
+
+# Shell 脚本必须 LF —— CRLF 会导致 Linux/macOS 报 bad interpreter
+*.sh text eol=lf
+
+# Windows 批处理在 Windows 上必须 CRLF，否则 goto / 变量展开可能异常
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# 二进制文件，不做任何转换
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
