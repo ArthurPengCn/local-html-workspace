@@ -386,8 +386,9 @@ grep -rn "C:\\\\Users\\\\gf" --include="*.js" --include="*.html" --include="*.ba
 grep -rn "docs.qq.com" --include="*.json" --exclude="config.json" .
 
 # 2b. 只对「真正会被提交的文件」做终检（推荐，结果必须为空）
+#     把 <你的用户名> 换成你的实际用户名，例如 gf / zhangsan
 git add -A --dry-run | sed "s/^add '//;s/'$//" | while read -r f; do
-  grep -Hn -E "Users.gf|docs\.qq\.com/(sheet|doc)/[A-Za-z0-9]" "$f"
+  grep -Hn -E "Users\\<你的用户名>|docs\.qq\.com/(sheet|doc)/[A-Za-z0-9]" "$f"
 done
 
 # 3. 提交
@@ -410,7 +411,7 @@ gh repo create your-repo-name --public --source=. --push
 | `.gitignore` | ✅ 排除 `config.json` / `app_index.json` / `backup/` / `test-*.png` / `*.log` |
 | `config.example.json` | ✅ 空模板；`launcher.js` 首次运行自动播种 |
 | `start.bat` 硬编码 node 路径 | ✅ 改为 `%USERPROFILE%` 循环探测 + `where node` 兜底 |
-| `launcher.js` PowerShell 扫描目录 | ✅ `C:\Users\gf\AppData\Local\Programs` → `(Join-Path $env:LOCALAPPDATA "Programs")` |
+| `launcher.js` PowerShell 扫描目录 | ✅ `C:\Users\<用户名>\AppData\Local\Programs` → `(Join-Path $env:LOCALAPPDATA "Programs")` |
 | `index.html` 路径 placeholder | ✅ → `如 C:\Users\<你的用户名>\WorkBuddy` |
 | 原型 `design-prototype.html` | ✅ 已脱敏 |
 | 原型 `工作台-精致版原型.html` | ✅ 已脱敏 |
