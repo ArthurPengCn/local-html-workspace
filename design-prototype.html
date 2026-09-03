@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>工作台 · 暖色活力原型</title>
+<style>
+:root{
+  --bg:linear-gradient(135deg,#FFF6EC 0%,#FFE6CC 100%);
+  --accent:#FF7A3D; --accent-2:#FF5E5B; --gold:#FFC857;
+  --ink:#3A2A1E; --muted:#8A7A6D; --line:rgba(255,122,61,.25);
+  --card:#ffffff; --shadow:0 6px 20px rgba(255,122,61,.12);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;}
+.app-header{background:linear-gradient(120deg,#FF8A3D,#FF5E5B);color:#fff;padding:18px 28px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 4px 16px rgba(255,94,91,.25);flex-wrap:wrap;gap:12px;}
+.brand{font-size:1.5rem;font-weight:700;letter-spacing:.5px;}
+.brand small{display:block;font-size:.72rem;font-weight:400;opacity:.85;letter-spacing:0;}
+.header-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+.btn{border:none;border-radius:10px;padding:9px 16px;font-size:.85rem;cursor:pointer;font-weight:600;transition:transform .1s,box-shadow .15s;}
+.btn:active{transform:translateY(1px);}
+.btn-primary{background:#fff;color:#FF5E5B;}
+.btn-ghost{background:rgba(255,255,255,.18);color:#fff;}
+.btn-accent{background:var(--accent);color:#fff;}
+.btn-coral{background:var(--accent-2);color:#fff;}
+.workbench{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;padding:22px;align-items:start;}
+@media(max-width:900px){.workbench{grid-template-columns:1fr;}}
+.panel{background:var(--card);border-radius:18px;padding:18px;box-shadow:var(--shadow);border:1px solid var(--line);}
+.panel h2{font-size:1.05rem;margin:0 0 12px;display:flex;align-items:center;gap:8px;}
+.panel h2 .dot{width:10px;height:10px;border-radius:50%;}
+.panel-apps h2 .dot{background:var(--gold);}
+.panel-folders h2 .dot{background:var(--accent);}
+.panel-files h2 .dot{background:var(--accent-2);}
+.search{width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--line);background:#FFF9F2;font-size:.9rem;outline:none;}
+.search:focus{border-color:var(--accent);}
+.toolbar{display:flex;gap:8px;margin:10px 0;flex-wrap:wrap;}
+.card{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:12px;background:#FFF9F2;border:1px solid var(--line);margin-bottom:10px;cursor:pointer;transition:background .15s,transform .1s;}
+.card:hover{background:#FFF1E6;transform:translateY(-1px);}
+.card .ico{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:.95rem;font-weight:700;background:var(--gold);color:#7a4a00;flex-shrink:0;}
+.card.files .ico{background:var(--accent-2);color:#fff;}
+.card.folders .ico{background:var(--accent);color:#fff;}
+.card .info{flex:1;min-width:0;}
+.card .name{font-weight:600;font-size:.92rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.card .sub{font-size:.76rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.card .acts{display:flex;gap:6px;flex-shrink:0;}
+.tag{display:inline-block;font-size:.7rem;padding:2px 8px;border-radius:20px;background:#FFE6CC;color:#C2521A;}
+.section-title{font-size:.8rem;color:var(--muted);margin:14px 0 8px;font-weight:600;letter-spacing:.5px;}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;}
+.tab{padding:7px 14px;border-radius:20px;background:#FFF1E6;font-size:.82rem;cursor:pointer;border:1px solid var(--line);}
+.tab.active{background:var(--accent);color:#fff;border-color:var(--accent);}
+.file-frame{width:100%;height:56vh;border:none;border-radius:12px;background:#fff;box-shadow:inset 0 0 0 1px var(--line);}
+.modal-mask{position:fixed;inset:0;background:rgba(58,42,30,.45);display:none;align-items:center;justify-content:center;z-index:50;}
+.modal-mask.show{display:flex;}
+.modal{background:#fff;border-radius:16px;padding:22px;width:380px;max-width:92vw;box-shadow:0 20px 60px rgba(0,0,0,.2);}
+.modal h3{margin:0 0 14px;color:var(--accent);}
+.modal label{display:block;font-size:.8rem;color:var(--muted);margin:10px 0 4px;}
+.modal input{width:100%;padding:9px 12px;border-radius:8px;border:1px solid var(--line);font-size:.9rem;outline:none;}
+.modal input:focus{border-color:var(--accent);}
+.modal-acts{display:flex;gap:8px;justify-content:flex-end;margin-top:18px;}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;padding:10px 20px;border-radius:24px;font-size:.85rem;opacity:0;transition:all .25s;pointer-events:none;z-index:100;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.empty{color:var(--muted);font-size:.82rem;padding:8px 0;}
+.status-bar{position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,.85);backdrop-filter:blur(6px);border-top:1px solid var(--line);padding:8px 20px;font-size:.78rem;color:var(--muted);display:flex;gap:20px;}
+</style>
+</head>
+<body>
+<header class="app-header">
+  <div class="brand">WorkBuddy 工作台<small>暖色活力 · 三栏本地工作台</small></div>
+  <div class="header-actions">
+    <button class="btn btn-primary" onclick="toast('已发送：全部启动')">全部启动</button>
+    <button class="btn btn-ghost" onclick="toast('已发送：全部关闭')">全部关闭</button>
+    <span id="statusText" class="status-pill" style="font-size:.78rem;opacity:.9"></span>
+  </div>
+</header>
+
+<main class="workbench">
+  <!-- 栏1 常用应用 -->
+  <section class="panel panel-apps">
+    <h2><span class="dot"></span>常用应用</h2>
+    <input class="search" id="appSearch" placeholder="搜索本机应用，如 微信 / chrome" oninput="onSearch(this.value)">
+    <div class="toolbar">
+      <button class="btn btn-accent btn-sm" onclick="openAddApp()">+ 添加应用</button>
+    </div>
+    <div id="appsList"></div>
+    <div id="searchResults" style="display:none"></div>
+  </section>
+
+  <!-- 栏2 常用文件夹 -->
+  <section class="panel panel-folders">
+    <h2><span class="dot"></span>常用文件夹</h2>
+    <div class="section-title">固定文件夹</div>
+    <div id="pinnedList"></div>
+    <div class="section-title">最近访问</div>
+    <div id="recentList"></div>
+  </section>
+
+  <!-- 栏3 常用文件 -->
+  <section class="panel panel-files">
+    <h2><span class="dot"></span>常用文件</h2>
+    <div class="tabs" id="fileTabs"></div>
+    <div id="fileContent"></div>
+  </section>
+</main>
+
+<div class="status-bar">
+  <span id="sbStatus">加载中…</span>
+  <span>端口 38760</span>
+  <span>下次刷新 30 分钟后</span>
+</div>
+
+<!-- 添加应用模态 -->
+<div class="modal-mask" id="appModal">
+  <div class="modal">
+    <h3 id="modalTitle">添加应用</h3>
+    <label>名称</label>
+    <input id="appName" placeholder="应用名称">
+    <label>路径</label>
+    <input id="appPath" placeholder="C:\Program Files\...\app.exe">
+    <div class="modal-acts">
+      <button class="btn btn-ghost" style="background:#eee;color:#555" onclick="closeModal()">取消</button>
+      <button class="btn btn-accent" onclick="saveApp()">保存</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+var apps=[
+  {name:'workbuddy',path:'C:\\Users\\<用户名>\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\WorkBuddy.lnk'},
+  {name:'ima',path:'C:\\Users\\<用户名>\\AppData\\Local\\ima.copilot\\Application\\ima.copilot.exe'},
+  {name:'微信',path:'C:\\Program Files (x86)\\Tencent\\WeChat\\WeChat.exe'}
+];
+var pinned=[
+  {name:'2026-08-11-17-16-49',path:'C:\\Users\\<用户名>\\WorkBuddy\\2026-08-11-17-16-49'},
+  {name:'示例报告',path:'C:\\Users\\<用户名>\\WorkBuddy\\2026-08-17-13-53-15\\report'}
+];
+var recent=[
+  {name:'项目A',path:'C:\\Users\\<用户名>\\WorkBuddy\\项目A'},
+  {name:'项目B',path:'C:\\Users\\<用户名>\\WorkBuddy\\项目B'}
+];
+var files=[
+  {name:'本地报告.docx',path:'C:\\Users\\<用户名>\\WorkBuddy\\report\\summary.docx',type:'local'},
+  {name:'示例在线表格',path:'https://docs.qq.com/sheet/<你的表格ID>',type:'url'},
+  {name:'示例在线文档',path:'https://docs.qq.com/doc/<你的文档ID>',type:'url'}
+];
+
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+function renderApps(){
+  var h=apps.map(function(a){
+    return '<div class="card" onclick="toast(\'打开：'+esc(a.name)+'\')">'
+      +'<div class="ico">应</div>'
+      +'<div class="info"><div class="name">'+esc(a.name)+'</div><div class="sub">'+esc(a.path)+'</div></div>'
+      +'<div class="acts"><button class="btn btn-accent btn-sm" onclick="event.stopPropagation();toast(\'打开：'+esc(a.name)+'\')">打开</button>'
+      +'<button class="btn btn-ghost btn-sm" style="background:#eee;color:#555" onclick="event.stopPropagation();delApp(\''+esc(a.name)+'\')">删除</button></div></div>';
+  }).join('');
+  document.getElementById('appsList').innerHTML=h||'<div class="empty">暂无应用，点击“+ 添加应用”</div>';
+}
+
+function renderPinned(){
+  var h=pinned.map(function(f){
+    return '<div class="card folders" onclick="toast(\'打开文件夹：'+esc(f.name)+'\')">'
+      +'<div class="ico">夹</div>'
+      +'<div class="info"><div class="name">'+esc(f.name)+'</div><div class="sub">'+esc(f.path)+'</div></div>'
+      +'<div class="acts"><button class="btn btn-ghost btn-sm" style="background:#eee;color:#555" onclick="event.stopPropagation();toast(\'已固定\')">固定</button>'
+      +'<button class="btn btn-ghost btn-sm" style="background:#eee;color:#555" onclick="event.stopPropagation();delPinned(\''+esc(f.name)+'\')">删除</button></div></div>';
+  }).join('');
+  document.getElementById('pinnedList').innerHTML=h||'<div class="empty">暂无固定文件夹</div>';
+
+  var r=recent.map(function(f){
+    return '<div class="card folders" onclick="toast(\'打开文件夹：'+esc(f.name)+'\')">'
+      +'<div class="ico">夹</div>'
+      +'<div class="info"><div class="name">'+esc(f.name)+'</div><div class="sub">'+esc(f.path)+'</div></div></div>';
+  }).join('');
+  document.getElementById('recentList').innerHTML=r||'<div class="empty">暂无最近访问</div>';
+}
+
+function renderFiles(){
+  var tabs=files.map(function(f,i){
+    return '<div class="tab'+(i===0?' active':'')+'" onclick="openTab('+i+')">'+esc(f.name)+'</div>';
+  }).join('');
+  document.getElementById('fileTabs').innerHTML=tabs;
+  openTab(0);
+}
+
+function openTab(i){
+  var f=files[i];
+  var tabs=document.getElementById('fileTabs').querySelectorAll('.tab');
+  tabs.forEach(function(t,idx){t.className='tab'+(idx===i?' active':'');});
+  var c=document.getElementById('fileContent');
+  if(f.type==='url'){
+    c.innerHTML='<iframe class="file-frame" src="'+esc(f.path)+'"></iframe>'
+      +'<div class="toolbar"><button class="btn btn-coral" onclick="popout(\''+esc(f.path)+'\',\''+esc(f.name)+'\')">独立窗口</button></div>';
+  }else{
+    c.innerHTML='<div class="card files" onclick="toast(\'打开：'+esc(f.name)+'\')">'
+      +'<div class="ico">文</div><div class="info"><div class="name">'+esc(f.name)+'</div><div class="sub">'+esc(f.path)+'</div></div>'
+      +'<div class="acts"><button class="btn btn-accent btn-sm" onclick="event.stopPropagation();toast(\'打开：'+esc(f.name)+'\')">打开</button></div></div>';
+  }
+}
+
+function popout(url,title){
+  var w=window.open('','_blank','width=1200,height=800');
+  if(!w){toast('请允许弹出窗口');return;}
+  w.document.write('<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><title>'+title+'</title>'
+    +'<style>body{margin:0;font-family:Segoe UI,system-ui,sans-serif}header{background:#FF5E5B;color:#fff;padding:10px 16px;font-weight:600;display:flex;justify-content:space-between;align-items:center}header button{background:rgba(255,255,255,.2);border:none;color:#fff;border-radius:8px;padding:6px 12px;cursor:pointer}iframe{width:100%;height:calc(100vh - 44px);border:0}</style>'
+    +'</head><body><header><span>'+title+' · 独立窗口</span><button onclick="window.close()">关闭</button></header>'
+    +'<iframe src="'+url+'"></iframe></body></html>');
+  w.document.close();
+}
+
+function onSearch(q){
+  q=q.trim();
+  var box=document.getElementById('searchResults');
+  var list=document.getElementById('appsList');
+  if(!q){box.style.display='none';list.style.display='';return;}
+  var matched=apps.filter(function(a){return a.name.toLowerCase().indexOf(q.toLowerCase())>=0;});
+  var items=matched.slice();
+  if(items.length===0){
+    items=[{name:q+' (本机应用示例)',path:'C:\\Program Files\\'+q+'\\'+q+'.exe'}];
+  }
+  var h=items.map(function(a){
+    return '<div class="card" onclick="toast(\'打开：'+esc(a.name)+'\')">'
+      +'<div class="ico">应</div>'
+      +'<div class="info"><div class="name">'+esc(a.name)+'</div><div class="sub">'+esc(a.path)+'</div></div>'
+      +'<div class="acts"><button class="btn btn-accent btn-sm" onclick="event.stopPropagation();toast(\'打开：'+esc(a.name)+'\')">打开</button>'
+      +'<button class="btn btn-coral btn-sm" onclick="event.stopPropagation();addFound(\''+esc(a.name)+'\',\''+esc(a.path)+'\')">添加</button></div></div>';
+  }).join('');
+  box.innerHTML=h;
+  box.style.display='';
+  list.style.display='none';
+}
+
+function addFound(name,path){
+  if(apps.some(function(a){return a.name===name;})){toast('该应用已在列表中');return;}
+  apps.push({name:name,path:path});
+  renderApps();
+  document.getElementById('searchResults').style.display='none';
+  document.getElementById('appSearch').value='';
+  toast('已添加：'+name);
+}
+
+function openAddApp(){
+  document.getElementById('modalTitle').textContent='添加应用';
+  document.getElementById('appName').value='';
+  document.getElementById('appPath').value='';
+  document.getElementById('appModal').classList.add('show');
+}
+function closeModal(){document.getElementById('appModal').classList.remove('show');}
+function saveApp(){
+  var n=document.getElementById('appName').value.trim();
+  var p=document.getElementById('appPath').value.trim();
+  if(!n||!p){toast('请填写名称和路径');return;}
+  apps.push({name:n,path:p});
+  renderApps();closeModal();toast('已添加：'+n);
+}
+function delApp(name){apps=apps.filter(function(a){return a.name!==name;});renderApps();toast('已删除：'+name);}
+function delPinned(name){pinned=pinned.filter(function(f){return f.name!==name;});renderPinned();toast('已移除：'+name);}
+
+var toastTimer=null;
+function toast(msg){
+  var t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(function(){t.classList.remove('show');},1800);
+}
+
+renderApps();renderPinned();renderFiles();
+document.getElementById('sbStatus').textContent='应用 '+apps.length+' 个 · 文件夹 '+(pinned.length+recent.length)+' 个 · 文件 '+files.length+' 个';
+</script>
+</body>
+</html>

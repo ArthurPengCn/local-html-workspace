@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>我的工作台</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ============ Design Tokens (OKLCH · 暖色活力精致版 v3 · 侧边栏+主区域) ============ */
+:root{
+  --brand-50:oklch(97% .02 55); --brand-100:oklch(94% .04 55); --brand-200:oklch(88% .08 55);
+  --brand-300:oklch(80% .12 55); --brand-400:oklch(75% .14 55); --brand-500:oklch(70% .16 55);
+  --brand-600:oklch(62% .17 55); --brand-700:oklch(52% .15 55); --brand-800:oklch(42% .12 55); --brand-900:oklch(32% .08 55);
+  --accent-gold:oklch(82% .13 85);
+  --accent-coral:oklch(65% .18 28);
+  --neutral-0:oklch(99% .005 60); --neutral-50:oklch(97% .008 60); --neutral-100:oklch(95% .010 60);
+  --neutral-200:oklch(90% .012 60); --neutral-300:oklch(86% .012 60); --neutral-400:oklch(72% .012 60);
+  --neutral-500:oklch(58% .012 60); --neutral-600:oklch(48% .013 60); --neutral-700:oklch(38% .013 60); --neutral-900:oklch(26% .015 60);
+  --success:oklch(60% .14 150); --warning:oklch(72% .15 80); --error:oklch(58% .18 28); --info:oklch(60% .11 240);
+
+  --color-primary:var(--brand-500); --color-on-primary:var(--neutral-0);
+  --color-text:var(--neutral-700); --color-text-strong:var(--neutral-900); --color-text-muted:var(--neutral-500);
+  --color-surface:var(--neutral-0); --color-bg:linear-gradient(135deg,oklch(97% .012 60) 0%,oklch(94% .020 55) 100%);
+  --color-border:var(--neutral-300); --color-divider:var(--neutral-200); --color-hover:var(--neutral-100);
+  --surface-1:var(--neutral-0); --surface-2:oklch(98% .006 60); --overlay:oklch(26% .015 60 / .45);
+
+  --font-display:'Plus Jakarta Sans','Noto Sans SC',system-ui,sans-serif;
+  --font-body:var(--font-display);
+  --font-mono:'JetBrains Mono',ui-monospace,monospace;
+  --text-xs:.75rem; --text-sm:.875rem; --text-base:1rem; --text-lg:1.25rem; --text-xl:1.5rem; --text-2xl:2rem;
+  --weight-regular:400; --weight-medium:500; --weight-semibold:600; --weight-bold:700;
+
+  --space-1:4px; --space-2:8px; --space-3:12px; --space-4:16px; --space-5:20px; --space-6:24px; --space-8:32px; --space-12:48px;
+  --radius-sm:8px; --radius-md:12px; --radius-lg:16px; --radius-xl:20px; --radius-pill:999px;
+  --shadow-sm:0 1px 2px oklch(26% .015 60 / .06);
+  --shadow-md:0 6px 20px oklch(70% .16 55 / .12);
+  --shadow-lg:0 18px 50px oklch(26% .015 60 / .18);
+  --ring-focus:0 0 0 3px oklch(70% .16 55 / .35);
+
+  --ease-out-quart:cubic-bezier(.25,1,.5,1);
+  --ease-out-expo:cubic-bezier(.16,1,.3,1);
+  --dur-fast:150ms; --dur-base:220ms; --dur-slow:360ms;
+  --sidebar-width:260px;
+}
+:root[data-theme="dark"]{
+  --color-bg:linear-gradient(135deg,oklch(18% .012 55) 0%,oklch(15% .010 55) 100%);
+  --surface-1:oklch(20% .012 55); --surface-2:oklch(24% .012 55);
+  --neutral-0:oklch(20% .012 55); --neutral-100:oklch(24% .012 55); --neutral-200:oklch(30% .012 55);
+  --neutral-300:oklch(36% .012 55); --neutral-500:oklch(68% .012 60); --neutral-700:oklch(82% .010 60); --neutral-900:oklch(94% .008 60);
+  --brand-500:oklch(72% .14 55); --brand-600:oklch(78% .12 55);
+  --color-surface:var(--surface-1); --color-hover:var(--neutral-100);
+  --shadow-sm:none; --shadow-md:0 0 0 1px oklch(0% 0 0 / .2);
+  --overlay:oklch(10% .010 55 / .6);
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+html{font-size:16px;height:100%;}
+body{font-family:var(--font-body);background:var(--color-bg);color:var(--color-text);height:100%;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased;font-kerning:normal;}
+.nums{font-variant-numeric:tabular-nums;}
+
+/* ============ Header ============ */
+.app-header{background:linear-gradient(120deg,oklch(72% .16 55),oklch(66% .18 32));color:var(--neutral-0);
+  padding:var(--space-4) var(--space-6);display:flex;align-items:center;justify-content:space-between;
+  gap:var(--space-4);flex-shrink:0;box-shadow:0 4px 16px oklch(66% .18 32 / .22);}
+.brand{display:flex;flex-direction:column;line-height:1.15;}
+.brand .name{font-family:var(--font-display);font-weight:var(--weight-bold);font-size:var(--text-xl);letter-spacing:-.01em;}
+.brand .tag{font-size:var(--text-xs);font-weight:var(--weight-regular);opacity:.88;letter-spacing:.04em;margin-top:2px;}
+.header-actions{display:flex;gap:var(--space-3);align-items:center;flex-wrap:wrap;}
+.status-pill{display:inline-flex;align-items:center;gap:8px;background:oklch(0% 0 0 / .16);color:#fff;
+  padding:7px 14px;border-radius:var(--radius-pill);font-size:var(--text-sm);font-weight:var(--weight-medium);}
+.status-pill .live{width:8px;height:8px;border-radius:50%;background:oklch(85% .16 140);box-shadow:0 0 0 3px oklch(85% .16 140 / .3);}
+
+/* ============ Workspace ============ */
+.workspace{flex:1;display:flex;overflow:hidden;}
+
+/* ============ Sidebar ============ */
+.sidebar{width:var(--sidebar-width);flex-shrink:0;border-right:1px solid var(--color-border);background:var(--color-surface);
+  padding:var(--space-4);display:flex;flex-direction:column;gap:var(--space-5);overflow-y:auto;}
+.side-section{display:flex;flex-direction:column;gap:var(--space-2);}
+.side-head{display:flex;align-items:center;justify-content:space-between;}
+.side-title{font-size:.7rem;font-weight:var(--weight-bold);color:var(--color-text-muted);letter-spacing:.08em;text-transform:uppercase;}
+.side-add{font-size:.75rem;color:var(--brand-700);background:transparent;border:0;cursor:pointer;padding:3px 8px;border-radius:var(--radius-sm);font-weight:var(--weight-semibold);}
+.side-add:hover{background:var(--brand-50);}
+.side-list{display:flex;flex-direction:column;border:1px solid var(--color-border);border-radius:var(--radius-md);overflow:hidden;background:var(--color-surface);}
+.side-item{display:flex;align-items:center;gap:var(--space-3);padding:10px var(--space-3);cursor:pointer;transition:background var(--dur-fast);position:relative;}
+.side-item + .side-item{border-top:1px solid var(--color-divider);}
+.side-item:hover{background:var(--color-hover);}
+.side-item:hover .side-acts{opacity:1;transform:translateX(0);}
+.side-icon{width:32px;height:32px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;}
+.icon-app{background:oklch(90% .06 85);color:oklch(40% .10 85);}
+.icon-folder{background:oklch(90% .08 55);color:var(--brand-700);}
+.icon-file{background:oklch(88% .08 28);color:var(--accent-coral);}
+.icon-recent{background:var(--neutral-100);color:var(--color-text-muted);}
+.side-info{flex:1;min-width:0;}
+.side-name{font-size:.9rem;font-weight:var(--weight-semibold);color:var(--color-text-strong);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3;}
+.side-note{font-family:var(--font-mono);font-size:.72rem;color:var(--color-text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px;}
+.side-acts{display:flex;gap:4px;opacity:0;transform:translateX(4px);transition:opacity var(--dur-base),transform var(--dur-base) var(--ease-out-quart);flex-shrink:0;}
+@media(max-width:760px){.side-acts{opacity:1;transform:none;}}
+.side-empty{padding:var(--space-4);text-align:center;color:var(--color-text-muted);font-size:.82rem;}
+.side-empty .ico{font-size:1.4rem;display:block;margin-bottom:var(--space-2);opacity:.5;}
+
+/* App search inside sidebar */
+.side-search{position:relative;margin-bottom:var(--space-2);}
+.side-search input{width:100%;padding:8px 10px 8px 32px;border:1px solid var(--color-border);border-radius:var(--radius-md);
+  background:var(--neutral-50);color:var(--color-text);font-family:inherit;font-size:.82rem;outline:none;transition:border-color var(--dur-fast),box-shadow var(--dur-fast);}
+.side-search input::placeholder{color:var(--neutral-500);}
+.side-search input:focus{border-color:var(--brand-500);box-shadow:var(--ring-focus);}
+.side-search .si{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--neutral-400);pointer-events:none;font-size:.85rem;}
+
+/* ============ Splitter（侧边栏拖动分割线） ============ */
+.splitter{width:6px;flex-shrink:0;cursor:col-resize;background:transparent;position:relative;
+  display:flex;align-items:center;justify-content:center;transition:background var(--dur-fast);z-index:5;}
+.splitter::after{content:'';width:2px;height:48px;border-radius:2px;background:var(--color-border);
+  transition:background var(--dur-fast),height var(--dur-fast);}
+.splitter:hover,.splitter.dragging{background:var(--brand-50);}
+.splitter:hover::after,.splitter.dragging::after{background:var(--brand-500);height:72px;}
+:root[data-theme="dark"] .splitter:hover,:root[data-theme="dark"] .splitter.dragging{background:oklch(30% .012 55);}
+body.col-resizing{cursor:col-resize !important;user-select:none;}
+body.col-resizing iframe{pointer-events:none;}
+
+/* ============ 开机自动启动：总开关 ============ */
+.side-master{display:flex;align-items:center;justify-content:space-between;gap:var(--space-2);
+  padding:10px 12px;border:1px solid var(--color-border);border-radius:var(--radius-md);background:var(--color-surface);}
+.side-master .label{font-size:.8rem;font-weight:var(--weight-semibold);color:var(--color-text-strong);display:flex;align-items:center;gap:6px;}
+.switch{position:relative;width:36px;height:20px;flex-shrink:0;display:inline-block;}
+.switch input{opacity:0;width:0;height:0;position:absolute;}
+.switch .track{position:absolute;inset:0;border-radius:999px;background:var(--neutral-300);transition:background var(--dur-fast);cursor:pointer;}
+.switch .track::after{content:'';position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;
+  transition:transform var(--dur-fast) var(--ease-out-quart);box-shadow:0 1px 2px oklch(0% 0 0 / .25);}
+.switch input:checked + .track{background:var(--success);}
+.switch input:checked + .track::after{transform:translateX(16px);}
+.switch input:focus-visible + .track{box-shadow:var(--ring-focus);}
+
+/* ============ 启动开关（行内按钮 + 图标角标） ============ */
+.as-toggle{display:inline-flex;align-items:center;gap:3px;padding:3px 8px;font-size:.65rem;font-weight:var(--weight-semibold);
+  border-radius:var(--radius-pill);border:1px solid var(--color-border);cursor:pointer;
+  color:var(--color-text-muted);background:transparent;transition:all var(--dur-fast);white-space:nowrap;}
+.as-toggle:hover{border-color:var(--success);}
+.as-toggle.on{background:oklch(92% .07 150);color:oklch(40% .12 150);border-color:transparent;font-weight:var(--weight-bold);}
+:root[data-theme="dark"] .as-toggle.on{background:oklch(32% .06 150);color:oklch(80% .12 150);}
+.side-icon{position:relative;}
+.as-dot{position:absolute;top:-3px;right:-3px;width:10px;height:10px;border-radius:50%;background:var(--success);
+  border:2px solid var(--color-surface);display:none;}
+.side-item[data-autostart="1"] .as-dot{display:block;}
+
+/* ============ Main area ============ */
+.main{flex:1;display:flex;flex-direction:column;min-width:0;background:var(--color-surface);position:relative;}
+.main-head{display:flex;align-items:center;gap:var(--space-4);padding:var(--space-4) var(--space-6);border-bottom:1px solid var(--color-border);flex-shrink:0;}
+.main-head-txt{min-width:0;flex:1;}
+.main-head #clearPanes{flex-shrink:0;}
+.main-title{font-size:var(--text-lg);font-weight:var(--weight-semibold);color:var(--color-text-strong);}
+.main-sub{font-size:var(--text-sm);color:var(--color-text-muted);margin-top:2px;}
+
+.content{flex:1;display:flex;flex-direction:column;overflow:auto;position:relative;}
+.empty-state{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:var(--color-text-muted);padding:var(--space-6);}
+.empty-state .ico{font-size:3.5rem;opacity:.35;margin-bottom:var(--space-3);}
+.empty-state .lead{font-size:1.1rem;font-weight:var(--weight-semibold);color:var(--color-text-strong);margin-bottom:6px;}
+.empty-state .hint{font-size:.9rem;max-width:360px;line-height:1.5;}
+.frame{flex:1;width:100%;border:0;background:var(--color-surface);}
+.frame.local{display:flex;align-items:center;justify-content:center;background:var(--neutral-50);}
+.frame-info{padding:var(--space-6);text-align:center;color:var(--color-text-muted);}
+.frame-info .ico{font-size:2.5rem;opacity:.45;margin-bottom:var(--space-3);}
+.frame-info .title{font-size:1rem;font-weight:var(--weight-semibold);color:var(--color-text-strong);margin-bottom:6px;}
+.frame-actions{display:flex;gap:var(--space-2);justify-content:center;margin-top:var(--space-4);}
+
+/* ============ 平铺工作区：按打开数量等分 ============ */
+.content.tiled{display:grid;gap:1px;background:var(--color-divider);overflow:hidden;}
+.pane{position:relative;display:flex;flex-direction:column;min-width:0;min-height:0;background:var(--color-surface);overflow:hidden;}
+.pane-head{flex-shrink:0;display:flex;align-items:center;gap:var(--space-2);padding:5px var(--space-3);border-bottom:1px solid var(--color-divider);background:var(--color-surface);}
+.pane-kind{font-size:.62rem;font-weight:var(--weight-semibold);padding:1px 6px;border-radius:var(--radius-pill);background:var(--neutral-100);color:var(--color-text-muted);flex-shrink:0;}
+.pane-title{font-size:.78rem;font-weight:var(--weight-semibold);color:var(--color-text-strong);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;}
+.pane-acts{margin-left:auto;display:flex;gap:2px;flex-shrink:0;}
+.pane-btn{width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;border:0;border-radius:var(--radius-sm);background:transparent;color:var(--color-text-muted);cursor:pointer;font-size:.9rem;line-height:1;padding:0;}
+.pane-btn:hover{background:var(--color-hover);color:var(--color-text-strong);}
+.pane-body{flex:1;min-height:0;display:flex;flex-direction:column;}
+.pane-body .frame{flex:1;min-height:0;}
+/* 在线文件：iframe + 「用浏览器打开」兜底提示 */
+.frame-wrap{position:relative;flex:1;min-height:0;display:flex;flex-direction:column;}
+.frame-open{position:absolute;left:50%;bottom:12px;transform:translateX(-50%);z-index:2;
+  display:inline-flex;align-items:center;gap:6px;max-width:calc(100% - 24px);
+  padding:6px 12px;border:1px solid var(--color-border);border-radius:999px;
+  background:var(--color-surface);color:var(--color-text-muted);
+  font-family:inherit;font-size:.72rem;line-height:1.4;cursor:pointer;
+  box-shadow:0 2px 8px rgba(0,0,0,.12);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.frame-open:hover{color:var(--color-text-strong);border-color:var(--accent-coral);background:var(--color-hover);}
+.pane.flash{animation:paneFlash 1.4s ease-out;}
+@keyframes paneFlash{0%{box-shadow:inset 0 0 0 2px var(--accent-coral);}70%{box-shadow:inset 0 0 0 2px var(--accent-coral);}100%{box-shadow:inset 0 0 0 2px transparent;}}
+@media(prefers-reduced-motion:reduce){.pane.flash{animation:none;}}
+
+/* ============ Buttons ============ */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:0;border-radius:var(--radius-md);
+  font-family:inherit;font-weight:var(--weight-semibold);cursor:pointer;transition:background var(--dur-fast),transform var(--dur-base) var(--ease-out-quart),box-shadow var(--dur-base),color var(--dur-fast);user-select:none;}
+.btn:focus-visible{outline:none;box-shadow:var(--ring-focus);}
+.btn:active{transform:translateY(1px);}
+.btn:disabled{opacity:.55;cursor:not-allowed;pointer-events:none;}
+.btn-md{padding:9px 16px;font-size:var(--text-sm);}
+.btn-sm{padding:5px 10px;font-size:.72rem;min-height:28px;}
+.btn-primary{background:var(--brand-600);color:var(--neutral-0);}
+.btn-primary:hover{background:var(--brand-700);box-shadow:var(--shadow-md);transform:translateY(-1px);}
+.btn-ghost{background:oklch(0% 0 0 / .14);color:#fff;}
+.btn-ghost:hover{background:oklch(0% 0 0 / .24);}
+.btn-subtle{background:transparent;color:var(--brand-700);border:1px solid var(--brand-200);}
+.btn-subtle:hover{background:var(--brand-50);}
+.btn-danger{background:var(--accent-coral);color:#fff;}
+.btn-danger:hover{background:oklch(56% .17 28);}
+.btn-edit{background:var(--accent-gold);color:oklch(34% .06 85);}
+.btn-edit:hover{background:oklch(76% .13 85);}
+.btn-accent{background:var(--brand-600);color:var(--neutral-0);}
+.btn-accent:hover{background:var(--brand-700);}
+
+/* ============ Modal ============ */
+.modal-overlay{position:fixed;inset:0;background:var(--overlay);display:none;align-items:center;justify-content:center;z-index:100;padding:var(--space-4);}
+.modal-overlay.show{display:flex;}
+.modal{background:var(--surface-2);border-radius:var(--radius-xl);padding:var(--space-6);width:420px;max-width:100%;
+  box-shadow:var(--shadow-lg);animation:modalIn var(--dur-slow) var(--ease-out-expo);}
+@keyframes modalIn{from{opacity:0;transform:scale(.97) translateY(6px);}to{opacity:1;transform:scale(1) translateY(0);}}
+.modal h3{font-size:var(--text-lg);font-weight:var(--weight-semibold);color:var(--color-text-strong);margin-bottom:var(--space-4);}
+.field{margin-bottom:var(--space-4);}
+.field label{display:block;font-size:var(--text-sm);color:var(--color-text-muted);margin-bottom:6px;font-weight:var(--weight-medium);}
+.field input{width:100%;padding:10px 12px;border:1px solid var(--color-border);border-radius:var(--radius-md);
+  background:var(--neutral-50);color:var(--color-text);font-family:inherit;font-size:var(--text-sm);outline:none;transition:border-color var(--dur-fast),box-shadow var(--dur-fast);}
+.field input:focus{border-color:var(--brand-500);box-shadow:var(--ring-focus);}
+.modal-acts{display:flex;gap:var(--space-2);justify-content:flex-end;margin-top:var(--space-5);}
+
+/* ============ Toast / Status ============ */
+.toast{position:fixed;bottom:72px;left:50%;transform:translateX(-50%) translateY(12px);background:var(--neutral-900);
+  color:var(--neutral-0);padding:10px 20px;border-radius:var(--radius-pill);font-size:var(--text-sm);font-weight:var(--weight-medium);
+  opacity:0;pointer-events:none;transition:opacity var(--dur-base),transform var(--dur-base) var(--ease-out-quart);z-index:120;box-shadow:var(--shadow-lg);max-width:80vw;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.status-bar{position:fixed;bottom:0;left:0;right:0;background:oklch(99% .005 60 / .85);backdrop-filter:blur(8px);
+  border-top:1px solid var(--color-divider);padding:8px var(--space-6);font-size:var(--text-sm);color:var(--color-text-muted);
+  display:flex;gap:var(--space-6);z-index:40;align-items:center;}
+:root[data-theme="dark"] .status-bar{background:oklch(20% .012 55 / .85);}
+.status-bar .nums{color:var(--color-text);}
+.poll-warn{color:oklch(58% .18 28);}
+
+@media(max-width:760px){
+  .sidebar{width:100% !important;border-right:0;border-bottom:1px solid var(--color-border);max-height:45vh;}
+  .workspace{flex-direction:column;}
+  .splitter{display:none;}
+}
+
+@media(prefers-reduced-motion:reduce){
+  *{transition:none !important;animation:none !important;}
+}
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="brand">
+    <span class="name">我的工作台</span>
+    <span class="tag">侧边栏 · 主区域 · 本地工作台</span>
+  </div>
+  <div class="header-actions">
+    <span class="status-pill"><span class="live"></span><span id="pillStat" class="nums">—</span></span>
+    <button class="btn btn-primary btn-md" onclick="launchAll()">全部启动</button>
+    <button class="btn btn-ghost btn-md" onclick="closeAll()">全部关闭</button>
+    <button class="btn btn-subtle btn-sm" onclick="toggleTheme()" title="切换明暗主题" aria-label="切换明暗主题">◐ 明暗</button>
+  </div>
+</header>
+
+<div class="workspace">
+  <!-- 左侧边栏 -->
+  <aside class="sidebar" id="sidebar">
+    <!-- 开机自动启动总开关 -->
+    <section class="side-master">
+      <span class="label">⚡ 开机自动启动</span>
+      <label class="switch" title="总开关：关闭后所有项目启动时都不打开">
+        <input type="checkbox" id="masterAutostart" onchange="toggleMasterAutostart(this.checked)">
+        <span class="track"></span>
+      </label>
+    </section>
+
+    <!-- 常用应用 -->
+    <section class="side-section">
+      <div class="side-head"><span class="side-title">常用应用</span><button class="side-add" onclick="openAddAppModal()">＋ 添加</button></div>
+      <div class="side-search" role="search">
+        <span class="si">⌕</span>
+        <input id="appSearch" type="search" placeholder="搜索本机应用" oninput="filterApps(this.value)" aria-label="搜索本机应用">
+      </div>
+      <div class="side-list" id="appsList"></div>
+      <div class="side-list" id="searchResults" style="display:none"></div>
+    </section>
+
+    <!-- 常用文件夹 -->
+    <section class="side-section">
+      <div class="side-head"><span class="side-title">常用文件夹</span><button class="side-add" onclick="openAddFolderModal()">＋ 添加</button></div>
+      <div class="side-list" id="pinnedList"></div>
+      <div class="side-title" style="margin-top:var(--space-3);font-size:.65rem;">最近访问</div>
+      <div class="side-list" id="recentList" style="margin-top:var(--space-2);"></div>
+    </section>
+
+    <!-- 常用文件 -->
+    <section class="side-section">
+      <div class="side-head"><span class="side-title">常用文件</span><button class="side-add" onclick="openAddFileModal()">＋ 添加</button></div>
+      <div class="side-list" id="filesList"></div>
+    </section>
+  </aside>
+
+  <!-- 拖动分割线：调整侧边栏宽度 -->
+  <div class="splitter" id="splitter" title="拖动调整侧边栏宽度 · 双击恢复默认"></div>
+
+  <!-- 右侧主工作区 -->
+  <main class="main">
+    <div class="main-head">
+      <div class="main-head-txt">
+        <div class="main-title">主工作区</div>
+        <div class="main-sub" id="mainSub">点击左侧文件夹或文件，在此处打开</div>
+      </div>
+      <button class="btn btn-subtle btn-sm" id="clearPanes" onclick="closeAllPanes()" style="display:none">清空工作区</button>
+    </div>
+    <div class="content" id="content">
+      <div class="empty-state">
+        <div class="ico">◌</div>
+        <div class="lead">主区域为空</div>
+        <div class="hint">点击左侧任意文件夹或文件开始工作；常用应用将直接启动程序，不占用工作区。</div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- Add/Edit App Modal -->
+<div class="modal-overlay" id="appModal" aria-modal="true">
+  <div class="modal">
+    <h3 id="modalTitle">添加应用</h3>
+    <div class="field"><label for="appName">名称</label><input id="appName" placeholder="应用名称"></div>
+    <div class="field"><label for="appPath">路径</label><input id="appPath" placeholder="C:\Program Files\...\app.exe" style="font-family:var(--font-mono)"></div>
+    <input type="hidden" id="appId">
+    <div class="modal-acts">
+      <button class="btn btn-subtle btn-md" onclick="closeModal()">取消</button>
+      <button class="btn btn-primary btn-md" onclick="saveApp()">保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Folder Modal -->
+<div class="modal-overlay" id="folderModal" aria-modal="true">
+  <div class="modal">
+    <h3>添加文件夹</h3>
+    <div class="field"><label for="folderPath">文件夹路径</label><input id="folderPath" placeholder="如 C:\Users\<你的用户名>\WorkBuddy"></div>
+    <div class="modal-acts">
+      <button class="btn btn-subtle btn-md" onclick="closeFolderModal()">取消</button>
+      <button class="btn btn-primary btn-md" onclick="saveFolder()">保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add File Modal -->
+<div class="modal-overlay" id="fileModal" aria-modal="true">
+  <div class="modal">
+    <h3>添加常用文件</h3>
+    <div class="field"><label for="fileName">名称（留空自动取文件名）</label><input id="fileName" placeholder="如 项目周报"></div>
+    <div class="field"><label for="filePath">文件路径或网址（http(s):// 开头自动识别为在线）</label><input id="filePath" placeholder="D:\docs\周报.docx 或 https://docs.qq.com/..." style="font-family:var(--font-mono)"></div>
+    <div class="modal-acts">
+      <button class="btn btn-subtle btn-md" onclick="closeFileModal()">取消</button>
+      <button class="btn btn-primary btn-md" onclick="saveFile()">保存</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<!-- Status Bar -->
+<div class="status-bar">
+  <span id="statusText">加载中...</span>
+  <span id="pollStatus" class="poll-warn nums"></span>
+  <span style="margin-left:auto" class="nums">我的工作台</span>
+</div>
+
+<script>
+var BASE=(location.protocol.indexOf('http')===0)?location.origin:'http://127.0.0.1:38760';
+var cfg={apps:[],pinnedFolders:[],files:[],recentFolders:[]};
+var tabs=[];
+var activeTabId=null;
+var pollTimer=null;
+
+function api(path,opts){
+  opts=opts||{};
+  var url=BASE+path;
+  return new Promise(function(resolve,reject){
+    var req=new XMLHttpRequest();
+    req.open(opts.method||'GET',url,true);
+    req.onload=function(){
+      if(req.status>=200&&req.status<300){
+        try{resolve(JSON.parse(req.responseText));}catch(e){resolve({});}
+      }else reject(new Error(req.statusText));
+    };
+    req.onerror=function(){reject(new Error('无法连接工作台服务，请先运行 start.bat 再操作'));}
+    if(opts.body)req.setRequestHeader('Content-Type','application/json');
+    req.send(opts.body?JSON.stringify(opts.body):null);
+  });
+}
+
+function el(id){return document.getElementById(id);}
+function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+function jsAttr(s){return String(s==null?'':s).replace(/\\/g,'\\\\').replace(/'/g,"\\'");}
+function genId(){return 'idmt'+Date.now().toString(36)+Math.random().toString(36).substr(2,4);}
+function baseNameOf(p){return String(p||'').replace(/[\\\/]+$/,'').split(/[\\\/]/).pop()||p;}
+
+/* ---------- 侧边栏：常用应用 ---------- */
+function renderApps(apps){
+  apps=apps||[];
+  if(!apps.length){el('appsList').innerHTML=sideEmpty('暂无应用','点击「＋ 添加」或搜索本机应用');return;}
+  el('appsList').innerHTML=apps.map(function(a){
+    return sideItem({cls:'icon-app',icon:'💻',name:a.name,note:a.path,
+      dot:!!a.autostart,data:'data-autostart="'+(a.autostart?'1':'0')+'"',
+      click:'openApp(\''+esc(a.id)+'\')',
+      acts:asToggleBtn('toggleAppAutostart',a.id,!!a.autostart)+
+           '<button class="btn btn-accent btn-sm" onclick="event.stopPropagation();openApp(\''+esc(a.id)+'\')">打开</button>'+
+           '<button class="btn btn-edit btn-sm" onclick="event.stopPropagation();editApp(\''+esc(a.id)+'\')">编辑</button>'+
+           '<button class="btn btn-danger btn-sm" onclick="event.stopPropagation();delApp(\''+esc(a.id)+'\')">删除</button>'});
+  }).join('');
+}
+
+/* ---------- 侧边栏：固定文件夹（显示注释） ---------- */
+function renderPinned(folders){
+  folders=folders||[];
+  if(!folders.length){el('pinnedList').innerHTML=sideEmpty('暂无固定文件夹','把常用文件夹固定在此处');return;}
+  el('pinnedList').innerHTML=folders.map(function(f){
+    return sideItem({cls:'icon-folder',icon:'📁',name:f.note||f.name,note:f.path,
+      click:'openFolderInTab(\''+esc(f.id)+'\')',
+      acts:'<button class="btn btn-accent btn-sm" onclick="event.stopPropagation();openFolderInTab(\''+esc(f.id)+'\')">打开</button>'+
+           '<button class="btn btn-edit btn-sm" onclick="event.stopPropagation();editNote(\''+esc(f.id)+'\')">注释</button>'+
+           '<button class="btn btn-danger btn-sm" onclick="event.stopPropagation();delPinned(\''+esc(f.id)+'\')">取消</button>'});
+  }).join('');
+}
+
+function editNote(id){
+  var f=findPinned(id);if(!f)return;
+  var n=prompt('设置注释（留空恢复为文件夹名）：', f.note||f.name);
+  if(n===null)return;
+  n=String(n).trim();
+  if(!n){delete f.note;toast('注释已恢复为文件夹名');}
+  else{f.note=n;toast('注释已更新');}
+  saveAndReload();
+}
+
+/* ---------- 侧边栏：最近访问 ---------- */
+function renderRecent(recent){
+  recent=recent||[];
+  if(!recent.length){el('recentList').innerHTML=sideEmpty('暂无最近访问','打开文件夹后将出现在此处');return;}
+  el('recentList').innerHTML=recent.map(function(f){
+    return sideItem({cls:'icon-recent',icon:'🕘',name:f.name,note:f.path,
+      click:'openTarget(\''+jsAttr(f.path)+'\')',
+      acts:'<button class="btn btn-subtle btn-sm" onclick="event.stopPropagation();pinFolder(\''+jsAttr(f.name)+'\',\''+jsAttr(f.path)+'\')">固定</button>'});
+  }).join('');
+}
+
+/* ---------- 侧边栏：常用文件（点击直接打开为 Tab） ---------- */
+function renderFiles(files){
+  files=files||[];
+  if(!files.length){el('filesList').innerHTML=sideEmpty('暂无文件','点击「＋ 添加」添加常用文件');return;}
+  el('filesList').innerHTML=files.map(function(f){
+    return sideItem({cls:'icon-file',icon:f.type==='url'?'🌐':'📄',name:f.name,note:f.path,
+      dot:!!f.autostart,data:'data-autostart="'+(f.autostart?'1':'0')+'"',
+      click:'openFileInTab(\''+esc(f.id)+'\')',
+      acts:asToggleBtn('toggleFileAutostart',f.id,!!f.autostart)+
+           '<button class="btn btn-accent btn-sm" onclick="event.stopPropagation();openFileInTab(\''+esc(f.id)+'\')">打开</button>'+
+           '<button class="btn btn-danger btn-sm" onclick="event.stopPropagation();delFile(\''+esc(f.id)+'\')">删除</button>'});
+  }).join('');
+}
+
+function sideItem(o){
+  return '<div class="side-item"'+(o.data?' '+o.data:'')+' onclick="'+o.click+'">'+
+    '<div class="side-icon '+o.cls+'">'+o.icon+(o.dot?'<span class="as-dot" title="启动时自动打开"></span>':'')+'</div>'+
+    '<div class="side-info"><div class="side-name">'+esc(o.name)+'</div>'+(o.note?'<div class="side-note">'+esc(o.note)+'</div>':'')+'</div>'+
+    '<div class="side-acts">'+(o.acts||'')+'</div></div>';
+}
+function asToggleBtn(fn,id,on){
+  return '<button class="as-toggle '+(on?'on':'')+'" title="启动时自动打开：'+(on?'开':'关')+'（点击切换）" '+
+    'onclick="event.stopPropagation();'+fn+'(\''+esc(id)+'\')">⚡ '+(on?'启动·开':'启动·关')+'</button>';
+}
+function sideEmpty(t,s){return '<div class="side-empty"><span class="ico">◌</span><div>'+esc(t)+'</div>'+(s?'<div style="font-size:.72rem;margin-top:4px;opacity:.8">'+esc(s)+'</div>':'')+'</div>';}
+
+/* ---------- Tab 系统 ---------- */
+function openFolderInTab(id){
+  var f=findPinned(id);if(!f)return;
+  var existing=tabs.find(function(t){return t.itemId===id&&t.kind==='folder';});
+  if(existing){switchTab(existing.id);return;}
+  var tab={id:genId(),itemId:id,title:f.note||f.name,kind:'folder',path:f.path};
+  tabs.push(tab);renderTabContent();switchTab(tab.id);
+  openTarget(f.path);
+}
+
+function openFileInTab(id){
+  var f=findFile(id);if(!f)return;
+  var existing=tabs.find(function(t){return t.itemId===id&&t.kind==='file';});
+  if(existing){switchTab(existing.id);return;}
+  var tab={id:genId(),itemId:id,title:f.name,kind:'file',type:f.type,path:f.path};
+  tabs.push(tab);renderTabContent();switchTab(tab.id);
+  if(f.type==='local')openTarget(f.path);
+}
+
+/* 平铺模式：所有格子同时可见，点击标签不再切换显示，只定位并高亮对应格子 */
+function switchTab(id){
+  activeTabId=id;
+  tabs.forEach(function(t){t.active=(t.id===id);});
+  var pane=document.getElementById('pane-'+id);
+  if(!pane)return;
+  pane.scrollIntoView({behavior:'smooth',block:'nearest',inline:'nearest'});
+  pane.classList.remove('flash');
+  void pane.offsetWidth;
+  pane.classList.add('flash');
+}
+
+function closeTab(id,e){
+  if(e)e.stopPropagation();
+  tabs=tabs.filter(function(t){return t.id!==id;});
+  if(activeTabId===id){
+    var last=tabs[tabs.length-1];
+    activeTabId=last?last.id:null;
+  }
+  renderTabContent();
+}
+
+/* 无标签栏：已打开数量与「清空工作区」按钮都挂在标题栏上 */
+function renderMainHead(){
+  var btn=el('clearPanes');if(btn)btn.style.display=tabs.length?'':'none';
+  var sub=el('mainSub');
+  if(sub)sub.textContent=tabs.length
+    ? ('已打开 '+tabs.length+' 项 · 每个格子右上角 × 可单独关闭')
+    : '点击左侧文件夹或文件，在此处打开';
+}
+
+function closeAllPanes(){
+  if(!tabs.length)return;
+  var n=tabs.length;
+  tabs=[];activeTabId=null;
+  renderTabContent();
+  toast('已清空 '+n+' 个工作区格子');
+}
+
+/* ---------- 平铺网格：按打开数量自动决定行列（每个格子等大） ---------- */
+function gridShape(n){
+  if(n<=1)return{cols:1,rows:1};
+  if(n===2)return{cols:2,rows:1};   /* 左右各半 */
+  if(n===3)return{cols:3,rows:1};   /* 一行三列 */
+  if(n===4)return{cols:2,rows:2};   /* 2×2 */
+  if(n<=6)return{cols:3,rows:2};    /* 3×2 */
+  if(n<=9)return{cols:3,rows:3};    /* 3×3 */
+  return{cols:4,rows:Math.ceil(n/4)};
+}
+
+function paneHTML(t){
+  var kind=t.kind==='folder'?'文件夹':(t.type==='url'?'在线':'本地');
+  var body;
+  if(t.kind==='folder'){
+    body='<div class="frame local"><div class="frame-info"><div class="ico">📁</div><div class="title">已打开文件夹</div><div>'+esc(t.title)+'</div><div class="frame-actions"><button class="btn btn-primary btn-sm" onclick="openTarget(\''+jsAttr(t.path)+'\')">重新打开</button></div></div></div>';
+  }else if(t.type==='url'){
+    /* 直接以原链接渲染，不再包裹 /popout.html */
+    body='<div class="frame-wrap">'+
+         '<iframe class="frame" src="'+esc(t.path)+'" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-downloads"></iframe>'+
+         '<button class="frame-open" title="用浏览器打开原链接：'+esc(t.path)+'" onclick="popoutPane(\''+esc(t.id)+'\')">'+
+         '内容未显示？站点禁止嵌入 · 用浏览器打开 ↗</button></div>';
+  }else{
+    body='<div class="frame local"><div class="frame-info"><div class="ico">📄</div><div class="title">已用系统默认程序打开</div><div>'+esc(t.title)+'</div><div class="frame-actions"><button class="btn btn-primary btn-sm" onclick="openTarget(\''+jsAttr(t.path)+'\')">重新打开</button></div></div></div>';
+  }
+  var pop=(t.kind==='file'&&t.type==='url')?'<button class="pane-btn" title="用默认浏览器打开原链接" onclick="popoutPane(\''+esc(t.id)+'\')">⧉</button>':'';
+  return '<div class="pane" id="pane-'+esc(t.id)+'">'+
+    '<div class="pane-head"><span class="pane-kind">'+kind+'</span>'+
+    '<span class="pane-title" title="'+esc(t.title)+'">'+esc(t.title)+'</span>'+
+    '<span class="pane-acts">'+pop+'<button class="pane-btn" title="关闭" onclick="closeTab(\''+esc(t.id)+'\',event)">×</button></span>'+
+    '</div><div class="pane-body">'+body+'</div></div>';
+}
+
+/* 在线文件：直接用原始链接在默认浏览器新标签打开，不再经 /popout.html 包装 */
+function popoutPane(id){
+  var t=tabs.find(function(x){return x.id===id;});
+  if(!t||t.type!=='url')return;
+  var u=String(t.path||'');
+  if(!/^https?:\/\//i.test(u)){toast('该链接不是 http/https，已忽略：'+u);return;}
+  var w=window.open(u,'_blank','noopener');
+  if(!w){toast('浏览器拦截了弹窗，请允许本站弹出窗口后重试');return;}
+  toast('已在浏览器新标签打开：'+t.title);
+}
+
+function renderTabContent(){
+  renderMainHead();
+  var c=el('content');
+  if(!tabs.length){
+    c.className='content';
+    c.style.gridTemplateColumns='';
+    c.style.gridTemplateRows='';
+    c.innerHTML='<div class="empty-state"><div class="ico">◌</div><div class="lead">主区域为空</div><div class="hint">点击左侧任意文件夹或文件开始工作；带 ⚡ 标记的常用文件会在启动时自动平铺打开。</div></div>';
+    return;
+  }
+  var shape=gridShape(tabs.length);
+  c.className='content tiled';
+  c.style.gridTemplateColumns='repeat('+shape.cols+',1fr)';
+  c.style.gridTemplateRows='repeat('+shape.rows+',1fr)';
+  c.innerHTML=tabs.map(paneHTML).join('');
+}
+
+/* ---------- 搜索本机应用 ---------- */
+function filterApps(q){
+  var results=el('searchResults');
+  if(!q.trim()){results.style.display='none';renderApps(cfg.apps);return;}
+  results.style.display='block';el('appsList').style.display='none';
+  results.innerHTML=sideEmpty('搜索中…','正在检索本机应用索引');
+  api('/api/search?q='+encodeURIComponent(q)).then(function(r){
+    var apps=(r&&r.apps)||[];
+    if(apps.length===0&&r&&r.building){results.innerHTML=sideEmpty('正在建立应用索引','请稍候再搜…');return;}
+    results.innerHTML=apps.map(function(a){
+      return sideItem({cls:'icon-app',icon:'💻',name:a.name,note:a.path,
+        click:'openTarget(\''+jsAttr(a.path)+'\')',
+        acts:'<button class="btn btn-accent btn-sm" onclick="event.stopPropagation();openTarget(\''+jsAttr(a.path)+'\')">打开</button>'+
+             '<button class="btn btn-subtle btn-sm" onclick="event.stopPropagation();addFoundApp(\''+jsAttr(a.name)+'\',\''+jsAttr(a.path)+'\')">添加</button>'});
+    }).join('')||sideEmpty('未找到匹配应用','换个关键词，或点「＋ 添加」');
+  }).catch(function(e){toast(e.message);});
+}
+function addFoundApp(name,p){
+  name=(name||'').trim();p=(p||'').trim();
+  if(!name||!p)return;
+  if((cfg.apps||[]).some(function(a){return a.path===p||a.name===name;})){toast('该应用已在列表中');return;}
+  cfg.apps.push({id:genId(),name:name,path:p,autostart:false});
+  saveAndReload();
+}
+
+/* ---------- 动作：应用 / 文件夹 / 文件 ---------- */
+function openApp(id){
+  var a=findApp(id);if(!a){toast('应用不存在');return;}
+  api('/api/open?target='+encodeURIComponent(a.path)).then(function(r){
+    if(!r.ok)toast('打开失败：'+a.name);
+    else toast('已启动：'+a.name);
+  }).catch(function(e){toast(e.message);});
+}
+function findApp(id){return(cfg.apps||[]).find(function(a){return a.id===id;});}
+function findPinned(id){return(cfg.pinnedFolders||[]).find(function(f){return f.id===id;});}
+function findFile(id){return(cfg.files||[]).find(function(f){return f.id===id;});}
+
+/* ---------- 启动开关：应用 / 文件 / 总开关 ---------- */
+function toggleAppAutostart(id){
+  var a=findApp(id);if(!a)return;
+  a.autostart=!a.autostart;
+  saveAndReload();
+  toast('「'+a.name+'」'+(a.autostart?'将在启动时自动打开':'启动时不再打开'));
+}
+function toggleFileAutostart(id){
+  var f=findFile(id);if(!f)return;
+  f.autostart=!f.autostart;
+  saveAndReload();
+  toast('「'+f.name+'」'+(f.autostart?'将在启动时自动打开':'启动时不再打开'));
+}
+function toggleMasterAutostart(v){
+  cfg.autostartApps=!!v;
+  saveAndReload();
+  toast(v?'已开启「开机自动启动」总开关':'已关闭「开机自动启动」总开关');
+}
+
+function openTarget(path){
+  api('/api/open?target='+encodeURIComponent(path)).then(function(r){
+    if(!r.ok)toast('打开失败: '+path);
+    refreshRecent();
+  }).catch(function(e){toast(e.message);});
+}
+function refreshRecent(){
+  api('/api/recent-folders').then(function(r){
+    cfg.recentFolders=((r&&r.folders)||[]).filter(function(f){return f&&typeof f.path==='string'&&f.path.indexOf(':\\')>=0;});
+    renderRecent(cfg.recentFolders);updateCounts();
+  }).catch(function(){});
+}
+
+function editApp(id){
+  var a=findApp(id);if(!a)return;
+  el('modalTitle').textContent='编辑应用';
+  el('appId').value=a.id;el('appName').value=a.name;el('appPath').value=a.path;
+  el('appModal').classList.add('show');
+  setTimeout(function(){el('appName').focus();},60);
+}
+function openAddAppModal(){
+  el('modalTitle').textContent='添加应用';
+  el('appId').value='';el('appName').value='';el('appPath').value='';
+  el('appModal').classList.add('show');
+  setTimeout(function(){el('appName').focus();},60);
+}
+function closeModal(){
+  el('appModal').classList.remove('show');
+  el('appSearch').value='';filterApps('');
+}
+function saveApp(){
+  var id=el('appId').value,name=el('appName').value.trim(),path=el('appPath').value.trim();
+  if(!name||!path){toast('请填写名称和路径');return;}
+  if(id){var a=findApp(id);if(a){a.name=name;a.path=path;}}
+  else{cfg.apps.push({id:genId(),name:name,path:path,autostart:false});}
+  saveAndReload();
+}
+function delApp(id){
+  if(!confirm('删除此应用?'))return;
+  cfg.apps=cfg.apps.filter(function(a){return a.id!==id;});
+  saveAndReload();
+}
+function delPinned(id){
+  if(!confirm('取消固定此文件夹?'))return;
+  cfg.pinnedFolders=cfg.pinnedFolders.filter(function(f){return f.id!==id;});
+  saveAndReload();
+}
+function pinFolder(name,path){
+  path=(path||'').trim();name=(name||'').trim();
+  if(!path){toast('路径为空');return;}
+  if((cfg.pinnedFolders||[]).some(function(f){return f.path===path;})){toast('该文件夹已固定');return;}
+  cfg.pinnedFolders.push({id:genId(),name:name||baseNameOf(path),path:path});
+  saveAndReload();
+}
+
+function openAddFolderModal(){
+  el('folderPath').value='';
+  el('folderModal').classList.add('show');
+  setTimeout(function(){el('folderPath').focus();},60);
+}
+function closeFolderModal(){el('folderModal').classList.remove('show');}
+function saveFolder(){
+  var p=(el('folderPath').value||'').trim();
+  if(!p){toast('请填写文件夹路径');return;}
+  var name=baseNameOf(p);
+  if((cfg.pinnedFolders||[]).some(function(f){return f.path===p;})){toast('该文件夹已固定');return;}
+  cfg.pinnedFolders.push({id:genId(),name:name,path:p});
+  closeFolderModal();saveAndReload();
+}
+
+/* ---------- 常用文件：添加 / 删除 ---------- */
+function delFile(id){
+  var f=findFile(id);if(!f)return;
+  if(!confirm('删除常用文件「'+f.name+'」?'))return;
+  cfg.files=cfg.files.filter(function(x){return x.id!==id;});
+  tabs=tabs.filter(function(t){return !(t.kind==='file'&&t.itemId===id);});
+  if(activeTabId&&!tabs.some(function(t){return t.id===activeTabId;}))activeTabId=null;
+  saveAndReload();
+}
+function openAddFileModal(){
+  el('fileName').value='';el('filePath').value='';
+  el('fileModal').classList.add('show');
+  setTimeout(function(){el('fileName').focus();},60);
+}
+function closeFileModal(){el('fileModal').classList.remove('show');}
+function saveFile(){
+  var name=(el('fileName').value||'').trim();
+  var p=(el('filePath').value||'').trim();
+  if(!p){toast('请填写文件路径或网址');return;}
+  var isUrl=/^https?:\/\//i.test(p);
+  if(!name)name=baseNameOf(p);
+  if((cfg.files||[]).some(function(f){return f.path===p;})){toast('该文件已在列表中');return;}
+  cfg.files.push({id:genId(),name:name,path:p,type:isUrl?'url':'local',autostart:false});
+  closeFileModal();saveAndReload();
+}
+
+/* ---------- 全局启停 ---------- */
+function launchAll(){
+  api('/api/launch-all').then(function(r){
+    refreshStatus();
+    var res=(r&&r.results)||[];
+    var launched=res.filter(function(x){return !x.skipped;}).length;
+    var skipped=res.filter(function(x){return x.skipped;}).length;
+    var msg='已启动 '+launched+' 个';
+    if(skipped)msg+='，跳过 '+skipped+' 个（已在运行）';
+    toast(msg);
+  }).catch(function(e){toast(e.message);});
+}
+function closeAll(){api('/api/close-all').then(function(r){refreshStatus();toast('已发送：全部关闭');}).catch(function(e){toast(e.message);});}
+
+function saveAndReload(){
+  api('/api/save-config',{method:'POST',body:cfg}).then(function(){loadData();}).catch(function(e){toast(e.message);});
+}
+
+function buildIndex(){api('/api/index/build').catch(function(){});}
+
+function refreshStatus(){
+  api('/api/stat').then(function(s){
+    el('statusText').textContent='应用: '+(s.apps?s.apps.length:0)+' 个 | 端口: '+(s.ports?s.ports.http:'-');
+  }).catch(function(){});
+}
+function pollState(){
+  var now=new Date();
+  var last=parseInt(el("pollStatus").getAttribute("data-last")||"0");
+  var remaining=Math.max(0,Math.round((30*60*1000-(now.getTime()-last))/60000));
+  el("pollStatus").setAttribute("data-last",String(now.getTime()));
+  el("pollStatus").textContent="下次: "+remaining+"分钟后";
+  refreshStatus();
+}
+
+/* ---------- 计数 / 状态 pill ---------- */
+function updateCounts(){
+  var apps=(cfg.apps||[]).length;
+  var pf=(cfg.pinnedFolders||[]).length;
+  var rf=(cfg.recentFolders||[]).length;
+  var fl=(cfg.files||[]).length;
+  el('pillStat').textContent='应用 '+apps+' · 文件夹 '+(pf+rf)+' · 文件 '+fl;
+}
+
+/* ---------- toast ---------- */
+var tt;
+function toast(msg){
+  var t=el('toast');t.textContent=msg;t.classList.add('show');
+  clearTimeout(tt);tt=setTimeout(function(){t.classList.remove('show');},1900);
+}
+
+/* ---------- 主题 ---------- */
+function applyTheme(){var t=localStorage.getItem('wb-theme');if(t)document.documentElement.setAttribute('data-theme',t);}
+function toggleTheme(){
+  var r=document.documentElement;
+  var d=r.getAttribute('data-theme')==='dark';
+  var n=d?'light':'dark';
+  r.setAttribute('data-theme',n);localStorage.setItem('wb-theme',n);
+  toast(d?'已切换到亮色':'已切换到暗色');
+}
+
+/* ---------- 加载 ---------- */
+var autoLaunched=false;
+function loadData(){
+  Promise.all([
+    api('/api/config'),
+    api('/api/recent-folders')
+  ]).then(function(r){
+    cfg=r[0];
+    cfg.recentFolders=((r[1]&&r[1].folders)||[]).filter(function(f){return f&&typeof f.path==='string'&&f.path.indexOf(':\\')>=0;});
+    renderApps(cfg.apps);renderPinned(cfg.pinnedFolders);renderRecent(cfg.recentFolders);renderFiles(cfg.files);
+    el('masterAutostart').checked=!!cfg.autostartApps;
+    updateCounts();pollState();
+    if(!autoLaunched){autoLaunched=true;autoLaunchOnEnter();}
+  }).catch(function(e){el('statusText').textContent='加载失败: '+e.message;});
+}
+
+/* ---------- 进入工作台：常用文件按自身 ⚡ 标记自动平铺（不受总开关控制） ---------- */
+function autoLaunchOnEnter(){
+  if(!cfg)return;
+  setTimeout(function(){
+    var autoFiles=(cfg.files||[]).filter(function(f){return f.autostart;});
+    var opened=0;
+    autoFiles.forEach(function(f){
+      if(f.type==='url'){openFileInTab(f.id);opened++;}   /* 在线文件：工作区平铺打开 */
+      else if(cfg.autostartApps){api('/api/open?target='+encodeURIComponent(f.path));} /* 本地文件：跟随总开关 */
+    });
+    if(opened){toast('已平铺打开 '+opened+' 个常用文件'+(tabs.length>opened?'，工作区共 '+tabs.length+' 项':''));}
+
+    /* 应用启动仍由总开关控制 */
+    if(!cfg.autostartApps)return;
+    var autoApps=(cfg.apps||[]).filter(function(a){return a.autostart;});
+    if(!autoApps.length)return;
+    api('/api/launch-all?ids='+encodeURIComponent(autoApps.map(function(a){return a.id;}).join(',')))
+      .then(function(r){
+        var launched=0,skipped=0;
+        if(r&&r.results){
+          launched=r.results.filter(function(x){return !x.skipped;}).length;
+          skipped=r.results.filter(function(x){return x.skipped;}).length;
+        }
+        if(launched||skipped){toast('自动启动：已打开 '+launched+' 个应用'+(skipped?'，跳过 '+skipped+' 个（已在运行）':''));}
+      }).catch(function(){});
+  },1200);
+}
+
+/* ---------- 侧边栏拖动分割线 ---------- */
+function initSplitter(){
+  var MINW=180,MAXW=420,DEFW=260;
+  var saved=parseInt(localStorage.getItem('wb-sidebar-width')||'0',10);
+  if(saved>=MINW&&saved<=MAXW){document.documentElement.style.setProperty('--sidebar-width',saved+'px');}
+  var spl=el('splitter');
+  var dragging=false;
+  function setW(w){
+    w=Math.max(MINW,Math.min(MAXW,w));
+    document.documentElement.style.setProperty('--sidebar-width',w+'px');
+    return w;
+  }
+  spl.addEventListener('mousedown',function(e){
+    dragging=true;spl.classList.add('dragging');
+    document.body.classList.add('col-resizing');
+    e.preventDefault();
+  });
+  document.addEventListener('mousemove',function(e){
+    if(!dragging)return;
+    setW(e.clientX); /* 侧边栏贴左边缘，clientX 即目标宽度 */
+  });
+  document.addEventListener('mouseup',function(){
+    if(!dragging)return;
+    dragging=false;
+    spl.classList.remove('dragging');
+    document.body.classList.remove('col-resizing');
+    var w=parseInt(getComputedStyle(document.documentElement).getPropertyValue('--sidebar-width'),10);
+    if(w>=MINW&&w<=MAXW)localStorage.setItem('wb-sidebar-width',String(w));
+  });
+  spl.addEventListener('dblclick',function(){
+    document.documentElement.style.setProperty('--sidebar-width',DEFW+'px');
+    localStorage.removeItem('wb-sidebar-width');
+    toast('侧边栏宽度已恢复默认');
+  });
+}
+
+document.addEventListener('DOMContentLoaded',function(){
+  applyTheme();
+  initSplitter();
+  loadData();
+  buildIndex();
+  setInterval(pollState,30*60*1000);
+});
+document.addEventListener('keydown',function(e){if(e.key==='Escape'){closeModal();closeFolderModal();closeFileModal();}});
+</script>
+</body>
+</html>

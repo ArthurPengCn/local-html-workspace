@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>WorkBuddy 工作台 · 侧边栏布局原型</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --brand-50:oklch(97% .02 55); --brand-100:oklch(94% .04 55); --brand-200:oklch(88% .08 55);
+  --brand-300:oklch(80% .12 55); --brand-400:oklch(75% .14 55); --brand-500:oklch(70% .16 55);
+  --brand-600:oklch(62% .17 55); --brand-700:oklch(52% .15 55);
+  --accent-gold:oklch(82% .13 85); --accent-coral:oklch(65% .18 28);
+  --neutral-0:oklch(99% .005 60); --neutral-50:oklch(97% .008 60); --neutral-100:oklch(95% .010 60);
+  --neutral-200:oklch(90% .012 60); --neutral-300:oklch(86% .012 60); --neutral-400:oklch(72% .012 60);
+  --neutral-500:oklch(58% .012 60); --neutral-600:oklch(48% .013 60); --neutral-700:oklch(38% .013 60); --neutral-900:oklch(26% .015 60);
+  --color-text:var(--neutral-700); --color-text-strong:var(--neutral-900); --color-text-muted:var(--neutral-500);
+  --color-surface:var(--neutral-0); --color-bg:linear-gradient(135deg,oklch(97% .012 60) 0%,oklch(94% .020 55) 100%);
+  --color-border:var(--neutral-300); --color-divider:var(--neutral-200); --color-hover:var(--neutral-100);
+  --font-display:'Plus Jakarta Sans','Noto Sans SC',system-ui,sans-serif;
+  --space-1:4px; --space-2:8px; --space-3:12px; --space-4:16px; --space-5:20px; --space-6:24px;
+  --radius-sm:8px; --radius-md:12px; --radius-lg:16px; --radius-pill:999px;
+  --shadow-sm:0 1px 2px oklch(26% .015 60 / .06);
+  --shadow-md:0 6px 20px oklch(70% .16 55 / .12);
+  --dur-base:220ms;
+  --ease-out-quart:cubic-bezier(.25,1,.5,1);
+}
+:root[data-theme="dark"]{
+  --color-bg:linear-gradient(135deg,oklch(18% .012 55) 0%,oklch(15% .010 55) 100%);
+  --color-surface:oklch(20% .012 55); --color-hover:oklch(24% .012 55);
+  --neutral-0:oklch(20% .012 55); --neutral-100:oklch(24% .012 55); --neutral-200:oklch(30% .012 55);
+  --neutral-300:oklch(36% .012 55); --neutral-500:oklch(68% .012 60); --neutral-700:oklch(82% .010 60); --neutral-900:oklch(94% .008 60);
+  --brand-500:oklch(72% .14 55);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;font-family:var(--font-display);background:var(--color-bg);color:var(--color-text);}
+body{display:flex;flex-direction:column;}
+
+.app-header{background:linear-gradient(120deg,oklch(72% .16 55),oklch(66% .18 32));color:var(--neutral-0);
+  padding:var(--space-4) var(--space-6);display:flex;align-items:center;justify-content:space-between;gap:var(--space-4);flex-shrink:0;}
+.brand .name{font-weight:700;font-size:1.35rem;letter-spacing:-.01em;}
+.brand .tag{font-size:.75rem;opacity:.9;margin-top:2px;}
+.header-actions{display:flex;gap:var(--space-3);align-items:center;}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:0;border-radius:var(--radius-md);
+  font-family:inherit;font-weight:600;cursor:pointer;transition:background var(--dur-base),transform var(--dur-base) var(--ease-out-quart);user-select:none;}
+.btn:focus-visible{outline:none;box-shadow:0 0 0 3px oklch(70% .16 55 / .35);}
+.btn-md{padding:8px 14px;font-size:.85rem;}
+.btn-sm{padding:5px 10px;font-size:.72rem;}
+.btn-primary{background:var(--brand-600);color:#fff;}
+.btn-primary:hover{background:var(--brand-700);}
+.btn-ghost{background:oklch(0% 0 0 / .14);color:#fff;}
+.btn-ghost:hover{background:oklch(0% 0 0 / .24);}
+.status-pill{display:inline-flex;align-items:center;gap:6px;background:oklch(0% 0 0 / .16);color:#fff;padding:6px 12px;border-radius:var(--radius-pill);font-size:.8rem;}
+.status-pill .live{width:7px;height:7px;border-radius:50%;background:oklch(85% .16 140);}
+.theme-toggle{position:fixed;top:14px;right:18px;z-index:50;background:transparent;color:var(--brand-700);border:1px solid var(--brand-200);}
+
+.workspace{flex:1;display:flex;overflow:hidden;}
+
+.sidebar{width:260px;flex-shrink:0;border-right:1px solid var(--color-border);background:var(--color-surface);padding:var(--space-4);display:flex;flex-direction:column;gap:var(--space-5);overflow-y:auto;}
+.side-section{display:flex;flex-direction:column;gap:var(--space-2);}
+.side-head{display:flex;align-items:center;justify-content:space-between;}
+.side-title{font-size:.7rem;font-weight:700;color:var(--color-text-muted);letter-spacing:.08em;text-transform:uppercase;}
+.side-add{font-size:.7rem;color:var(--brand-600);background:transparent;border:0;cursor:pointer;padding:2px 6px;border-radius:var(--radius-sm);}
+.side-add:hover{background:var(--brand-50);}
+.side-list{display:flex;flex-direction:column;border:1px solid var(--color-border);border-radius:var(--radius-md);overflow:hidden;background:var(--color-surface);}
+.side-item{display:flex;align-items:center;gap:var(--space-3);padding:10px var(--space-3);cursor:pointer;transition:background var(--dur-base);position:relative;}
+.side-item + .side-item{border-top:1px solid var(--color-divider);}
+.side-item:hover{background:var(--color-hover);}
+.side-item:hover .side-acts{opacity:1;transform:translateX(0);}
+.side-icon{width:30px;height:30px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:.95rem;flex-shrink:0;}
+.icon-app{background:oklch(90% .06 85);color:oklch(40% .10 85);}
+.icon-folder{background:oklch(90% .08 55);color:var(--brand-700);}
+.icon-file{background:oklch(88% .08 28);color:var(--accent-coral);}
+.side-info{flex:1;min-width:0;}
+.side-name{font-size:.9rem;font-weight:600;color:var(--color-text-strong);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.side-note{font-size:.72rem;color:var(--color-text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px;}
+.side-acts{display:flex;gap:4px;opacity:0;transform:translateX(4px);transition:opacity var(--dur-base),transform var(--dur-base) var(--ease-out-quart);}
+.act-btn{padding:3px 7px;font-size:.65rem;border-radius:var(--radius-sm);border:0;cursor:pointer;color:#fff;}
+.act-open{background:var(--brand-600);}
+.act-edit{background:var(--accent-gold);color:oklch(34% .06 85);}
+.act-del{background:var(--accent-coral);}
+
+.main{flex:1;display:flex;flex-direction:column;min-width:0;background:var(--color-surface);}
+.main-head{padding:var(--space-4) var(--space-6);border-bottom:1px solid var(--color-border);}
+.main-title{font-size:1rem;font-weight:600;color:var(--color-text-strong);}
+.main-sub{font-size:.8rem;color:var(--color-text-muted);margin-top:2px;}
+
+.tabbar{display:flex;gap:var(--space-2);padding:var(--space-3) var(--space-6) 0;border-bottom:1px solid var(--color-divider);overflow-x:auto;}
+.tab{display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:var(--radius-pill) var(--radius-pill) 0 0;background:var(--neutral-100);border:1px solid var(--color-divider);border-bottom:0;font-size:.82rem;color:var(--color-text);cursor:pointer;white-space:nowrap;transition:background var(--dur-base);}
+.tab:hover{background:var(--color-hover);}
+.tab.active{background:var(--brand-500);color:#fff;border-color:var(--brand-500);}
+.tab-close{width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.8rem;color:inherit;opacity:.7;}
+.tab-close:hover{background:oklch(0% 0 0 / .15);opacity:1;}
+
+.content{flex:1;display:flex;align-items:center;justify-content:center;padding:var(--space-6);overflow:auto;}
+.empty-state{text-align:center;color:var(--color-text-muted);}
+.empty-state .ico{font-size:3rem;opacity:.4;margin-bottom:var(--space-3);}
+.empty-state .lead{font-size:1rem;font-weight:600;color:var(--color-text-strong);margin-bottom:6px;}
+.empty-state .hint{font-size:.82rem;}
+
+.frame{width:100%;height:100%;border:1px solid var(--color-border);border-radius:var(--radius-md);background:#fff;display:flex;align-items:center;justify-content:center;color:var(--color-text-muted);}
+
+.toast{position:fixed;bottom:72px;left:50%;transform:translateX(-50%) translateY(12px);background:var(--neutral-900);color:var(--neutral-0);padding:10px 20px;border-radius:var(--radius-pill);font-size:.85rem;font-weight:500;opacity:0;pointer-events:none;transition:opacity var(--dur-base),transform var(--dur-base);z-index:120;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.status-bar{position:fixed;bottom:0;left:0;right:0;background:oklch(99% .005 60 / .85);backdrop-filter:blur(8px);border-top:1px solid var(--color-divider);padding:8px var(--space-6);font-size:.8rem;color:var(--color-text-muted);display:flex;gap:var(--space-6);z-index:40;}
+</style>
+</head>
+<body>
+<header class="app-header">
+  <div class="brand">
+    <div class="name">WorkBuddy 工作台</div>
+    <div class="tag">侧边栏 · 主区域 · 原型评估版</div>
+  </div>
+  <div class="header-actions">
+    <span class="status-pill"><span class="live"></span>应用 5 · 文件夹 2 · 文件 2</span>
+    <button class="btn btn-primary btn-md" onclick="toast('全部启动：已启动 1 个，跳过 4 个（已在运行）')">全部启动</button>
+    <button class="btn btn-ghost btn-md" onclick="toast('已发送：全部关闭')">全部关闭</button>
+  </div>
+</header>
+
+<button class="btn btn-sm theme-toggle" onclick="toggleTheme()">◐ 明暗</button>
+
+<div class="workspace">
+  <aside class="sidebar">
+    <section class="side-section">
+      <div class="side-head"><span class="side-title">常用应用</span><button class="side-add">＋ 添加</button></div>
+      <div class="side-list">
+        <div class="side-item" onclick="toast('启动 workbuddy')"><span class="side-icon icon-app">💻</span><span class="side-info"><div class="side-name">workbuddy</div></span><span class="side-acts"><span class="act-btn act-open">打开</span><span class="act-btn act-edit">编辑</span><span class="act-btn act-del">×</span></span></div>
+        <div class="side-item" onclick="toast('启动 ima')"><span class="side-icon icon-app">💻</span><span class="side-info"><div class="side-name">ima</div></span><span class="side-acts"><span class="act-btn act-open">打开</span><span class="act-btn act-edit">编辑</span><span class="act-btn act-del">×</span></span></div>
+        <div class="side-item" onclick="toast('启动 微信')"><span class="side-icon icon-app">💻</span><span class="side-info"><div class="side-name">微信</div></span><span class="side-acts"><span class="act-btn act-open">打开</span><span class="act-btn act-edit">编辑</span><span class="act-btn act-del">×</span></span></div>
+      </div>
+    </section>
+
+    <section class="side-section">
+      <div class="side-head"><span class="side-title">常用文件夹</span><button class="side-add">＋ 添加</button></div>
+      <div class="side-list">
+        <div class="side-item" onclick="openTab('folder1','示例调研项目A','文件夹')"><span class="side-icon icon-folder">📁</span><span class="side-info"><div class="side-name">示例调研项目A</div><div class="side-note">C:\Users\<用户名>\WorkBuddy\...</div></span><span class="side-acts"><span class="act-btn act-open">打开</span><span class="act-btn act-edit">注释</span><span class="act-btn act-del">取消</span></span></div>
+        <div class="side-item" onclick="openTab('folder2','示例调研项目B','文件夹')"><span class="side-icon icon-folder">📁</span><span class="side-info"><div class="side-name">示例调研项目B</div><div class="side-note">C:\Users\<用户名>\WorkBuddy\...</div></span><span class="side-acts"><span class="act-btn act-open">打开</span><span class="act-btn act-edit">注释</span><span class="act-btn act-del">取消</span></span></div>
+      </div>
+    </section>
+
+    <section class="side-section">
+      <div class="side-head"><span class="side-title">常用文件</span><button class="side-add">＋ 添加</button></div>
+      <div class="side-list">
+        <div class="side-item" onclick="openTab('file1','示例在线表格','在线文档')"><span class="side-icon icon-file">🌐</span><span class="side-info"><div class="side-name">示例在线表格</div><div class="side-note">腾讯文档</div></span><span class="side-acts"><span class="act-btn act-open">打开</span><span class="act-btn act-del">×</span></span></div>
+        <div class="side-item" onclick="openTab('file2','示例在线文档','在线文档')"><span class="side-icon icon-file">🌐</span><span class="side-info"><div class="side-name">示例在线文档</div><div class="side-note">腾讯文档</div></span><span class="side-acts"><span class="act-btn act-open">打开</span><span class="act-btn act-del">×</span></span></div>
+      </div>
+    </section>
+  </aside>
+
+  <main class="main">
+    <div class="main-head"><div class="main-title">主工作区</div><div class="main-sub">点击左侧项目在此处打开</div></div>
+    <div class="tabbar" id="tabbar"></div>
+    <div class="content" id="content">
+      <div class="empty-state">
+        <div class="ico">◌</div>
+        <div class="lead">主区域为空</div>
+        <div class="hint">点击左侧任意应用、文件夹或文件开始工作</div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div class="toast" id="toast"></div>
+<div class="status-bar"><span>服务运行中 · 端口 38760</span><span style="margin-left:auto">WorkBuddy 工作台</span></div>
+
+<script>
+var tabs=[];
+function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},1800);}
+function toggleTheme(){var r=document.documentElement;var d=r.getAttribute('data-theme')==='dark';r.setAttribute('data-theme',d?'light':'dark');toast(d?'已切换到亮色':'已切换到暗色');}
+function openTab(id,title,type){
+  var existing=tabs.find(function(t){return t.id===id;});
+  if(existing){switchTab(id);return;}
+  tabs.push({id:id,title:title,type:type});
+  renderTabs();
+  switchTab(id);
+  toast('已打开：'+title);
+}
+function switchTab(id){
+  tabs.forEach(function(t){t.active=t.id===id;});
+  renderTabs();
+  var active=tabs.find(function(t){return t.active;});
+  var c=document.getElementById('content');
+  if(!active){c.innerHTML='<div class="empty-state"><div class="ico">◌</div><div class="lead">主区域为空</div><div class="hint">点击左侧任意项目开始工作</div></div>';return;}
+  if(active.type==='在线文档'){
+    c.innerHTML='<div class="frame">iframe 加载：'+active.title+'<br><small>（原型中不加载真实网页）</small></div>';
+  }else if(active.type==='文件夹'){
+    c.innerHTML='<div class="frame">已打开文件夹：'+active.title+'<br><small>explorer.exe 资源管理器窗口已弹出</small></div>';
+  }else{
+    c.innerHTML='<div class="frame">'+active.title+'</div>';
+  }
+}
+function closeTab(id,e){if(e)e.stopPropagation();tabs=tabs.filter(function(t){return t.id!==id;});renderTabs();var active=tabs.find(function(t){return t.active;});if(active)switchTab(active.id);else switchTab(null);}
+function renderTabs(){
+  var html=tabs.map(function(t){return '<div class="tab '+(t.active?'active':'')+'" onclick="switchTab(\''+t.id+'\')">'+t.title+(t.type==='在线文档'?' <span style="font-size:.65rem;opacity:.8">在线</span>':'')+'<span class="tab-close" onclick="closeTab(\''+t.id+'\',event)">×</span></div>';}).join('');
+  document.getElementById('tabbar').innerHTML=html;
+}
+</script>
+</body>
+</html>
