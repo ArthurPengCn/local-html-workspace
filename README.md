@@ -1,7 +1,7 @@
 # WorkBuddy 本地工作台
 
 一个跑在**你自己电脑上**的网页工作台。左侧固定你常用的应用、文件夹和文件，右侧平铺所有已打开的内容。
-零依赖、单端口、只监听 `127.0.0.1`，不联网、不上传任何数据。
+零依赖、单端口、只监听 `127.0.0.1`，不联网、不上传任何数据。适合vibe coding时项目文件存在很深的路径，需要时找不到的情况。Claude Code， Codex，Workbuddy的重度使用者都需要。也可以做看板使用，设置常用文件，启动时在主工作区自动打开每日要看的指标文件即可。
 
 > **English:** A self-hosted, zero-dependency web workspace for your own machine. Pin your frequently used apps, folders and files on the left, tile your open content on the right. Single port, localhost only, no external services.
 
