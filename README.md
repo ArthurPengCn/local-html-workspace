@@ -6,6 +6,9 @@
 Claude Code， Codex，Workbuddy做项目，做任务保存目录大都以日期时间作为目录名，过时就忘，工作台提供注释功能，根据注释名，一眼看到想看的文件夹，点击就能马上访问。
 
 > **English:** A self-hosted, zero-dependency web workspace for your own machine. Pin your frequently used apps, folders and files on the left, tile your open content on the right. Single port, localhost only, no external services.
+Suitable for scenarios in vibe‑coding projects where files are buried deep in directory paths and hard to locate when needed. It is a must‑have tool for heavy users of Claude Code, Codex and Workbuddy.
+It can also serve as a dashboard. Configure your frequently‑used files, and set key daily metric files to open automatically in the main workspace on launch.
+When working on projects and tasks with Claude Code, Codex, or Workbuddy, saved directories are mostly named with timestamps. You will easily lose track of them over time. This workspace tool supports note tagging: you can instantly identify target folders by their annotated names and access them with a single click.
 
 ---
 
